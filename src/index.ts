@@ -2,14 +2,14 @@ import express, { Express, Request, Response } from 'express'
 import * as fs from 'fs'
 import path from 'path'
 import cors from 'cors'
-import bodyParser from 'body-parser'
+// import bodyParser from 'body-parser'
 
 const app: Express = express()
 const port: number = 3000
 
 app.use(cors)
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+// app.use(bodyParser.urlencoded({ extended: false }))
+// app.use(bodyParser.json())
 
 app.get('/', (req: Request, res: Response): void => {
     res.send('Rune Fast API')

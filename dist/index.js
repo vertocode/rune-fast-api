@@ -29,8 +29,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const fs = __importStar(require("fs"));
 const path_1 = __importDefault(require("path"));
+const cors_1 = __importDefault(require("cors"));
+// import bodyParser from 'body-parser'
 const app = (0, express_1.default)();
 const port = 3000;
+app.use(cors_1.default);
+// app.use(bodyParser.urlencoded({ extended: false }))
+// app.use(bodyParser.json())
 app.get('/', (req, res) => {
     res.send('Rune Fast API');
 });
