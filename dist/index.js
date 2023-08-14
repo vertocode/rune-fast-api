@@ -33,7 +33,11 @@ const cors_1 = __importDefault(require("cors"));
 // import bodyParser from 'body-parser'
 const app = (0, express_1.default)();
 const port = 3000;
-app.use(cors_1.default);
+const options = {
+    origin: '*'
+};
+app.use((0, cors_1.default)(options));
+app.use(express_1.default.json());
 // app.use(bodyParser.urlencoded({ extended: false }))
 // app.use(bodyParser.json())
 app.get('/', (req, res) => {
