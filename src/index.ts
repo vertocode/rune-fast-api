@@ -3,7 +3,6 @@ import * as fs from "fs"
 import path from "path";
 
 const app: Express = express()
-const port: number = 3000
 
 app.get('/', (req: Request, res: Response): void => {
     res.send('Rune Fast API')
@@ -21,6 +20,4 @@ app.get('/categories', (req: Request, res: Response): void => {
     }
 })
 
-app.listen(port, (): void => {
-    console.log(`⚡️[server]: Rune Fast API is running at http://localhost:${port}`)
-})
+module.exports = app

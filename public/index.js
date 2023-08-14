@@ -48,3 +48,4 @@ app.get('/categories', (req, res) => {
 app.listen(port, () => {
     console.log(`⚡️[server]: Rune Fast API is running at http://localhost:${port}`);
 });
+module.exports = app;
