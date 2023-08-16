@@ -22,6 +22,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -29,17 +38,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const fs = __importStar(require("fs"));
 const path_1 = __importDefault(require("path"));
+const axios_1 = __importDefault(require("axios"));
 const cors_1 = __importDefault(require("cors"));
-// import bodyParser from 'body-parser'
 const app = (0, express_1.default)();
 const port = 3000;
+const API_URL = 'https://secure.runescape.com/m=itemdb_rs/api';
 const options = {
     origin: '*'
 };
 app.use((0, cors_1.default)(options));
 app.use(express_1.default.json());
-// app.use(bodyParser.urlencoded({ extended: false }))
-// app.use(bodyParser.json())
 app.get('/', (req, res) => {
     res.send('Rune Fast API');
 });
@@ -54,6 +62,17 @@ app.get('/categories', (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+app.get('/items/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const params = req.params;
+    const response = yield (0, axios_1.default)(`${API_URL}/catalogue/category.json?category=${params.id}`);
+    const letterWithItems = response.data.alpha.map(({ letter, items }) => !!items ? letter : null).filter((letter) => letter);
+    const response2 = yield (0, axios_1.default)(`${API_URL}/catalogue/items.json?category=${params.id}&alpha=${letterWithItems[0]}&page=1`);
+    const allItemsByCategory = yield Promise.all(letterWithItems.map((letter) => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield (0, axios_1.default)(`${API_URL}/catalogue/items.json?category=${params.id}&alpha=${letter}&page=1`);
+        return response.data.items;
+    })));
+    res.send({ items: allItemsByCategory.flat() });
+}));
 app.listen(port, () => {
     console.log(`⚡️[server]: Rune Fast API is running at http://localhost:${port}`);
 });

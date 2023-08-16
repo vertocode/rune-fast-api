@@ -1,11 +1,13 @@
 import express, { Express, Request, Response } from 'express'
 import * as fs from 'fs'
 import path from 'path'
+import axios, { AxiosResponse } from 'axios'
 import cors, { CorsOptions } from 'cors'
-// import bodyParser from 'body-parser'
+import { LetterObject, Item } from './interface/GrandGeneralMarket'
 
 const app: Express = express()
 const port: number = 3000
+const API_URL: string = 'https://secure.runescape.com/m=itemdb_rs/api'
 
 const options: CorsOptions = {
     origin: '*'
@@ -13,8 +15,6 @@ const options: CorsOptions = {
 
 app.use(cors(options))
 app.use(express.json())
-// app.use(bodyParser.urlencoded({ extended: false }))
-// app.use(bodyParser.json())
 
 app.get('/', (req: Request, res: Response): void => {
     res.send('Rune Fast API')
@@ -30,6 +30,22 @@ app.get('/categories', (req: Request, res: Response): void => {
         console.error('Error reading categories.json:', error)
         res.status(500).send('Internal Server Error')
     }
+})
+
+app.get('/items/:id', async (req: Request, res: Response): Promise<void> => {
+    const params = req.params
+    const response: AxiosResponse = await axios(`${API_URL}/catalogue/category.json?category=${params.id}`)
+
+    const letterWithItems = response.data.alpha.map(({ letter, items }: LetterObject) => !!items ? letter : null).filter((letter: string) => letter)
+
+    const response2 = await axios(`${API_URL}/catalogue/items.json?category=${params.id}&alpha=${letterWithItems[0]}&page=1`)
+
+    const allItemsByCategory: any = await Promise.all(letterWithItems.map(async (letter: string) => {
+        const response = await axios(`${API_URL}/catalogue/items.json?category=${params.id}&alpha=${letter}&page=1`)
+        return response.data.items
+    }))
+
+    res.send({ items: allItemsByCategory.flat() })
 })
 
 app.listen(port, (): void => {
