@@ -1,5 +1,4 @@
 [
-    { "label": "Miscellaneous", "id": 0 },
     { "label": "Ammo", "id": 1 },
     { "label": "Arrows", "id": 2 },
     { "label": "Bolts", "id": 3 },
