@@ -42,7 +42,7 @@ const axios_1 = __importDefault(require("axios"));
 const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
 const port = 3000;
-const API_URL = 'https://secure.runescape.com/m=itemdb_rs/api';
+const API_URL = 'https://secure.runescape.com';
 const options = {
     origin: '*'
 };
@@ -62,13 +62,18 @@ app.get('/categories', (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+app.get('/rank-players/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const params = req.params;
+    const response = yield (0, axios_1.default)(`${API_URL}/m=hiscore/ranking.json?table=9&category=${params.id}&size=50`);
+    res.send({ players: response.data });
+}));
 app.get('/items/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const params = req.params;
-    const response = yield (0, axios_1.default)(`${API_URL}/catalogue/category.json?category=${params.id}`);
+    const response = yield (0, axios_1.default)(`${API_URL}/m=itemdb_rs/api/catalogue/category.json?category=${params.id}`);
     const letterWithItems = response.data.alpha.map(({ letter, items }) => !!items ? letter : null).filter((letter) => letter);
-    const response2 = yield (0, axios_1.default)(`${API_URL}/catalogue/items.json?category=${params.id}&alpha=${letterWithItems[0]}&page=1`);
+    const response2 = yield (0, axios_1.default)(`${API_URL}/m=itemdb_rs/api/catalogue/items.json?category=${params.id}&alpha=${letterWithItems[0]}&page=1`);
     const allItemsByCategory = yield Promise.all(letterWithItems.map((letter) => __awaiter(void 0, void 0, void 0, function* () {
-        const response = yield (0, axios_1.default)(`${API_URL}/catalogue/items.json?category=${params.id}&alpha=${letter}&page=1`);
+        const response = yield (0, axios_1.default)(`${API_URL}/m=itemdb_rs/api/catalogue/items.json?category=${params.id}&alpha=${letter}&page=1`);
         return response.data.items;
     })));
     res.send({ items: allItemsByCategory.flat() });
