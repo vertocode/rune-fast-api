@@ -35,8 +35,15 @@ app.get('/categories', (req: Request, res: Response): void => {
 app.get('/rank-players/:id', async (req: Request, res: Response) => {
     const params = req.params
     const response: AxiosResponse = await axios(`${API_URL}/m=hiscore/ranking.json?table=9&category=${params.id}&size=50`)
-    
+
     res.send({ players: response.data })
+})
+
+app.get('/rank-clans', async (req: Request, res: Response) => {
+    const params = req.params
+    const response: AxiosResponse = await axios(`${API_URL}/m=clan-hiscores/clanRanking.json`)
+
+    res.send({ clans: response.data })
 })
 
 app.get('/items/:id', async (req: Request, res: Response): Promise<void> => {

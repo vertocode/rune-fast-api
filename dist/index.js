@@ -67,6 +67,11 @@ app.get('/rank-players/:id', (req, res) => __awaiter(void 0, void 0, void 0, fun
     const response = yield (0, axios_1.default)(`${API_URL}/m=hiscore/ranking.json?table=9&category=${params.id}&size=50`);
     res.send({ players: response.data });
 }));
+app.get('/rank-clans', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const params = req.params;
+    const response = yield (0, axios_1.default)(`${API_URL}/m=clan-hiscores/clanRanking.json`);
+    res.send({ clans: response.data });
+}));
 app.get('/items/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const params = req.params;
     const response = yield (0, axios_1.default)(`${API_URL}/m=itemdb_rs/api/catalogue/category.json?category=${params.id}`);
